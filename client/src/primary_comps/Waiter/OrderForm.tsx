@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:3001');
 
 const OrderForm: React.FC = () => {
   const { tableId } = useParams<{ tableId: string }>();
@@ -16,6 +19,17 @@ const OrderForm: React.FC = () => {
       .then(response => response.json())
       .then(data => setMenuItems(data))
       .catch(error => console.error('Error fetching menu items:', error));
+  }, []);
+
+  useEffect(() => {
+    socket.on('orderUpdated', (order) => {
+      console.log('Order updated:', order);
+      // Handle the order update if needed
+    });
+
+    return () => {
+      socket.off('orderUpdated');
+    };
   }, []);
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -38,6 +52,9 @@ const OrderForm: React.FC = () => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
+
+      // Emit a socket event to notify clients
+      socket.emit('newOrder', { table: tableId, items: orderItems });
 
       navigate('/waiter/tables');
     } catch (error) {

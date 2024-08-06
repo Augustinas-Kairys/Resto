@@ -12,7 +12,6 @@ const TableForm: React.FC<TableFormProps> = ({ tableId, onTableSaved }) => {
 
   useEffect(() => {
     if (tableId) {
-      // Fetch existing table data if tableId is provided
       fetch(`http://localhost:3001/api/admin/tables/${tableId}`)
         .then(response => response.json())
         .then(table => {
@@ -40,8 +39,7 @@ const TableForm: React.FC<TableFormProps> = ({ tableId, onTableSaved }) => {
       const method = tableId ? 'PUT' : 'POST';
       const url = tableId ? `http://localhost:3001/api/admin/tables/${tableId}` : 'http://localhost:3001/api/admin/tables';
       
-      console.log('Submitting table data:', tableData); // Log the data being submitted
-
+      console.log('Submitting table data:', tableData); 
       const response = await fetch(url, {
         method,
         headers: {
@@ -51,9 +49,8 @@ const TableForm: React.FC<TableFormProps> = ({ tableId, onTableSaved }) => {
       });
 
       if (!response.ok) {
-        // Extract error message from the response
         const errorData = await response.json();
-        console.error('Server responded with an error:', errorData); // Log server error
+        console.error('Server responded with an error:', errorData);
         throw new Error(errorData.error || 'Network response was not ok');
       }
 

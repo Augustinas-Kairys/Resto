@@ -26,6 +26,8 @@ const orderSchema = new Schema({
     enum: ['pending', 'completed'],
     default: 'pending'
   }
+}, {
+  timestamps: true 
 });
 
 const Order = model('Order', orderSchema);

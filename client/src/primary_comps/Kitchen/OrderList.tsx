@@ -1,4 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import io from 'socket.io-client';
+import { FaWrench } from 'react-icons/fa';
+import SoundSettingsPopup from './SoundSettingsPopup';
+import sound from '../Assets/effect.mp3';
+import '../Assets/kitchen.css';
+import { formatDistanceToNow } from 'date-fns';
+
+const socket = io('http://localhost:3001'); 
 
 interface OrderItem {
   itemId: string;
@@ -23,15 +31,27 @@ interface Order {
     updatedAt: string;
   };
   items: OrderItem[];
-  status: string; // e.g., 'pending', 'complete'
+  status: string;
+  createdAt: string;  
+  updatedAt: string;  
 }
 
 const OrderList: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [filter, setFilter] = useState<'all' | 'pending' | 'complete'>('pending');
+  const [popupVisible, setPopupVisible] = useState(false);
 
   useEffect(() => {
     fetchOrders();
+
+    socket.on('refreshOrders', () => {
+      fetchOrders();
+      playNotificationSound(); 
+    });
+
+    return () => {
+      socket.off('refreshOrders');
+    };
   }, [filter]);
 
   const fetchOrders = async () => {
@@ -42,7 +62,6 @@ const OrderList: React.FC = () => {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
-      console.log('Fetched orders data:', data);
       setOrders(data);
     } catch (error) {
       console.error('Error fetching orders:', error);
@@ -67,6 +86,24 @@ const OrderList: React.FC = () => {
     } catch (error) {
       console.error('Error updating order status:', error);
     }
+  };
+
+  const playNotificationSound = () => {
+    if (window.localStorage.getItem('isMuted') !== 'true') {
+      const audio = new Audio(sound); 
+      audio.volume = parseFloat(window.localStorage.getItem('volume') || '1'); 
+      audio.play().catch(error => {
+        console.error('Error playing sound:', error);
+      });
+    }
+  };
+
+  const togglePopup = () => {
+    setPopupVisible(!popupVisible);
+  };
+
+  const formatTimeAgo = (dateString: string) => {
+    return formatDistanceToNow(new Date(dateString), { addSuffix: true });
   };
 
   return (
@@ -94,8 +131,17 @@ const OrderList: React.FC = () => {
         </button>
       </div>
 
+      <button 
+        className="btn btn-secondary mb-3" 
+        onClick={togglePopup}
+      >
+        <FaWrench /> Settings
+      </button>
+
+      {popupVisible && <SoundSettingsPopup onClose={togglePopup} />}
+
       {orders.length > 0 ? (
-        <ul className="list-group">
+        <ul className="list-group mt-4">
           {orders.map(order => (
             <li key={order._id} className="list-group-item">
               <h5>Table: {order.table.tableNumber}</h5>
@@ -107,7 +153,9 @@ const OrderList: React.FC = () => {
                   </li>
                 ))}
               </ul>
+              <p>Created at: {formatTimeAgo(order.createdAt)}</p>
               <p>Status: {order.status}</p>
+
               {order.status === 'pending' && (
                 <button
                   className="btn btn-success"

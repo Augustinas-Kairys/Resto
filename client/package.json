@@ -17,6 +17,7 @@
     "@types/express": "^4.17.21",
     "@types/multer": "^1.4.11",
     "bootstrap": "^5.3.2",
+    "date-fns": "^3.6.0",
     "dropzone": "^6.0.0-beta.2",
     "express": "^4.19.2",
     "jwt-decode": "^4.0.0",
