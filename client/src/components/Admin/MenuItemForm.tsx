@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { MenuItem } from './types';
+import { MenuItem } from '../Utils/types';
 
 interface MenuItemFormProps {
   fetchMenuItems: () => void;
@@ -48,7 +48,7 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ fetchMenuItems, editingItem
 
     try {
       const method = editingItem ? 'PUT' : 'POST';
-      const url = editingItem ? `http://localhost:3001/api/admin/menu/${editingItem._id}` : 'http://localhost:3001/api/admin/menu';
+      const url = editingItem ? `http://localhost:3001/api/menu/${editingItem._id}` : 'http://localhost:3001/api/menu';
       const response = await fetch(url, {
         method,
         body: formData,

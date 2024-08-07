@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Table from '../models/table';
+import Table from '../models/Table';
 
 export const createTable = async (req: Request, res: Response) => {
   try {

@@ -6,39 +6,13 @@ import sound from '../Assets/effect.mp3';
 import '../Assets/kitchen.css';
 import { formatDistanceToNow } from 'date-fns';
 
-const socket = io('http://localhost:3001'); 
+import { Order } from '../Utils/types';
 
-interface OrderItem {
-  itemId: string;
-  quantity: number;
-  comment: string;
-  item: {
-    _id: string;
-    name: string;
-    description: string;
-    price: number;
-    category: string;
-  };
-}
-
-interface Order {
-  _id: string;
-  table: {
-    _id: string;
-    tableNumber: string;
-    capacity: number;
-    createdAt: string;
-    updatedAt: string;
-  };
-  items: OrderItem[];
-  status: string;
-  createdAt: string;  
-  updatedAt: string;  
-}
+const socket = io('http://localhost:3001');
 
 const OrderList: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [filter, setFilter] = useState<'all' | 'pending' | 'complete'>('pending');
+  const [filter, setFilter] = useState<'all' | 'pending' | 'accepted' | 'complete'>('pending');
   const [popupVisible, setPopupVisible] = useState(false);
 
   useEffect(() => {
@@ -46,7 +20,7 @@ const OrderList: React.FC = () => {
 
     socket.on('refreshOrders', () => {
       fetchOrders();
-      playNotificationSound(); 
+      playNotificationSound();
     });
 
     return () => {
@@ -57,7 +31,7 @@ const OrderList: React.FC = () => {
   const fetchOrders = async () => {
     try {
       const statusQuery = filter === 'all' ? '' : `?status=${filter}`;
-      const response = await fetch(`http://localhost:3001/api/admin/orders${statusQuery}`);
+      const response = await fetch(`http://localhost:3001/api/orders${statusQuery}`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -68,14 +42,14 @@ const OrderList: React.FC = () => {
     }
   };
 
-  const handleStatusChange = async (orderId: string) => {
+  const handleStatusChange = async (orderId: string, newStatus: 'accepted' | 'complete') => {
     try {
-      const response = await fetch(`http://localhost:3001/api/admin/orders/${orderId}`, {
+      const response = await fetch(`http://localhost:3001/api/orders/${orderId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ status: 'complete' }), 
+        body: JSON.stringify({ status: newStatus }),
       });
 
       if (!response.ok) {
@@ -90,8 +64,8 @@ const OrderList: React.FC = () => {
 
   const playNotificationSound = () => {
     if (window.localStorage.getItem('isMuted') !== 'true') {
-      const audio = new Audio(sound); 
-      audio.volume = parseFloat(window.localStorage.getItem('volume') || '1'); 
+      const audio = new Audio(sound);
+      audio.volume = parseFloat(window.localStorage.getItem('volume') || '1');
       audio.play().catch(error => {
         console.error('Error playing sound:', error);
       });
@@ -122,6 +96,12 @@ const OrderList: React.FC = () => {
           onClick={() => setFilter('pending')}
         >
           Pending Orders
+        </button>
+        <button
+          className={`btn ${filter === 'accepted' ? 'btn-primary' : 'btn-outline-primary'} me-2`}
+          onClick={() => setFilter('accepted')}
+        >
+          Accepted Orders
         </button>
         <button
           className={`btn ${filter === 'complete' ? 'btn-primary' : 'btn-outline-primary'}`}
@@ -158,8 +138,17 @@ const OrderList: React.FC = () => {
 
               {order.status === 'pending' && (
                 <button
+                  className="btn btn-warning"
+                  onClick={() => handleStatusChange(order._id, 'accepted')}
+                >
+                  Mark as Accepted
+                </button>
+              )}
+
+              {order.status === 'accepted' && (
+                <button
                   className="btn btn-success"
-                  onClick={() => handleStatusChange(order._id)}
+                  onClick={() => handleStatusChange(order._id, 'complete')}
                 >
                   Mark as Complete
                 </button>

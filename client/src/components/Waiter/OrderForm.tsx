@@ -15,7 +15,7 @@ const OrderForm: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/admin/menu')
+    fetch('http://localhost:3001/api/menu')
       .then(response => response.json())
       .then(data => setMenuItems(data))
       .catch(error => console.error('Error fetching menu items:', error));
@@ -24,7 +24,6 @@ const OrderForm: React.FC = () => {
   useEffect(() => {
     socket.on('orderUpdated', (order) => {
       console.log('Order updated:', order);
-      // Handle the order update if needed
     });
 
     return () => {
@@ -41,7 +40,7 @@ const OrderForm: React.FC = () => {
 
     setError(null); 
     try {
-      const response = await fetch('http://localhost:3001/api/admin/orders', {
+      const response = await fetch('http://localhost:3001/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -53,7 +52,6 @@ const OrderForm: React.FC = () => {
         throw new Error('Network response was not ok');
       }
 
-      // Emit a socket event to notify clients
       socket.emit('newOrder', { table: tableId, items: orderItems });
 
       navigate('/waiter/tables');

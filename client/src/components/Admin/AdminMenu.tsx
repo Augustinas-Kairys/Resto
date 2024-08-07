@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import MenuItemForm from './MenuItemForm';
 import MenuItemList from './MenuItemList';
-import { MenuItem } from './types';
+import { MenuItem } from '../Utils/types';
 
 const Admin: React.FC = () => {
   const [items, setItems] = useState<MenuItem[]>([]);
@@ -13,7 +13,7 @@ const Admin: React.FC = () => {
 
   const fetchMenuItems = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/admin/menu');
+      const response = await fetch('http://localhost:3001/api/menu');
       if (!response.ok) throw new Error('Failed to fetch menu items');
       const data: MenuItem[] = await response.json();
       setItems(data);

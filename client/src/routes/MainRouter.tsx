@@ -1,12 +1,14 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import Index from '../primary_comps/Index';
-import Admin from '../primary_comps/Admin/Admin';
-import AdminMenu from '../primary_comps/Admin/AdminMenu';
-import TableList from '../primary_comps/Admin/TableList';
-import TablePage from '../primary_comps/Admin/TablePage';
-import WaiterTableList from '../primary_comps/Waiter/WaiterTableList';
-import OrderForm from '../primary_comps/Waiter/OrderForm';
-import Kitchen from '../primary_comps/Kitchen/Kitchen';
+import Index from '../components/Index';
+import Admin from '../components/Admin/Admin';
+import AdminMenu from '../components/Admin/AdminMenu';
+import TableList from '../components/Admin/TableList';
+import TablePage from '../components/Admin/TablePage';
+import WaiterTableList from '../components/Waiter/WaiterTableList';
+import OrderForm from '../components/Waiter/OrderForm';
+import Kitchen from '../components/Kitchen/Kitchen';
+import Login from '../components/Auth/Login';
+import AdminCreateUser from '../components/Admin/AdminCreateUser';
 
 
 function MainRouter() {
@@ -15,6 +17,7 @@ function MainRouter() {
     <Router>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/Login" element={<Login />} />
           <Route path="/Admin" element={<Admin />} />
           <Route path="/Tables" element={<TableList />} />
           <Route path="/create-table" element={<TablePage />} />
@@ -22,6 +25,7 @@ function MainRouter() {
           <Route path="/AdminMenuEdit" element={<AdminMenu />} />
           <Route path="/waiter/tables" element={<WaiterTableList/>} />
           <Route path="/create-order/:tableId" element={<OrderForm/>} />
+          <Route path="/Admin/Create-User" element={<AdminCreateUser />} />
           <Route path="/Kitchen" element={<Kitchen/>} />
         </Routes>
     </Router>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { MenuItem } from './types';
+import { MenuItem } from '../Utils/types';
 
 interface MenuItemListProps {
   items: MenuItem[];
@@ -10,7 +10,7 @@ interface MenuItemListProps {
 const MenuItemList: React.FC<MenuItemListProps> = ({ items, onEdit, onDelete }) => {
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/admin/menu/${id}`, {
+      const response = await fetch(`http://localhost:3001/api/menu/${id}`, {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete menu item');

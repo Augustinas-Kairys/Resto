@@ -8,6 +8,8 @@ const Admin: React.FC = () => {
       <Link to="/AdminMenuEdit">Create New Menu Items</Link>
       <br />
       <Link to="/Tables">Create New Tables</Link>
+      <br />
+      <Link to="/Admin/Create-User">Create a User</Link>
     </div>
   );
 };

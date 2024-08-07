@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import MenuItem from '../models/menuItem';
+import MenuItem from '../models/MenuItem';
 
 import upload from '../config/multer'; 
 
