@@ -1,0 +1,13 @@
+.PhoneInputInput {
+    border-radius: .25rem; 
+    border: 1px solid #ced4da; 
+    padding: .375rem .75rem; 
+    font-size: 1rem; 
+    line-height: 1.5; 
+  }
+  
+  .PhoneInputInput:focus {
+    border-color: #80bdff; 
+    outline: 0; 
+    box-shadow: 0 0 0 .2rem rgba(38, 143, 255, .25); 
+  }
